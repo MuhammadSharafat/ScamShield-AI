@@ -1,71 +1,48 @@
-# 🛡️ ScamShield AI
-### Explainable Financial Scam Warning System
+# ScamShield AI
 
-ScamShield AI is an AI-powered financial message analysis tool that combines rule-based warning signals with Machine Learning to identify potentially suspicious messages, highlight evidence, and encourage safer financial decisions.
+An explainable warning tool for suspicious financial messages, built with Python and Streamlit.
 
-Built with Python and Streamlit, this project provides an interactive dashboard that helps users understand common warning signs in financial messages.
+You paste in a message (an investment offer, a payment demand, a "verify your account" text) and the app tells you what looks risky about it and why. It combines a set of hand-written rules with a small machine learning classifier. The goal is to help people slow down and verify a message, not to give a final verdict on it.
 
-## 🚀 Live Demo
+**Live demo:** [scamshield-ai on Streamlit](https://scamshield-ai-fyfhkxe4779egmd9tsvuhq.streamlit.app/)
 
-**Try ScamShield AI:** [Open Live Application](https://scamshield-ai-fyfhkxe4779egmd9tsvuhq.streamlit.app/)
+![ScamShield AI dashboard](screenshots/scamshield-dashboard.png)
 
-Explore the interactive dashboard and review the warning signals detected in financial messages.
+> **Note:** This is an educational prototype. It is not a fraud detector or financial advice, and its output can be wrong. A result should never be treated as proof that a message is a scam or that it is safe.
 
-## 🖥️ Application Preview
+## What it does
 
-![ScamShield AI Dashboard](screenshots/scamshield-dashboard.png)
+- **Rule-based checks:** flags patterns such as unrealistic return promises, urgent payment requests, and requests for sensitive information.
+- **ML classification:** a TF-IDF + Logistic Regression pipeline labels each message as suspicious or not flagged.
+- **Evidence in the output:** the dashboard highlights the exact text that triggered a rule and explains the reason.
+- **Evaluation and validation scripts:** accuracy, precision, recall, F1, confusion matrix, cross-validation, and a dataset checker for bad labels, empty messages, and duplicates.
+- **Safety guidance:** short, general tips on verifying a claim through official channels.
 
-**[🚀 Try the Live Application](https://scamshield-ai-fyfhkxe4779egmd9tsvuhq.streamlit.app/)**
+## Tech stack
 
-> **Disclaimer:** ScamShield AI is an educational prototype, not a definitive fraud detector or financial advisor. Its results may be incorrect and should never be treated as proof that a message is fraudulent or legitimate.
+Python, Streamlit, Pandas, scikit-learn, Joblib, Pytest.
 
-## ✨ Key Features
+## How it works
 
-- 🔍 **Rule-Based Detection:** Identifies predefined warning patterns, including unrealistic return promises, urgent payment requests, and requests for sensitive information.
-- 🤖 **Machine Learning Classification:** Uses TF-IDF text features and Logistic Regression to classify messages as suspicious or not flagged.
-- 🔎 **Explainable Results:** Highlights matched text and explains why a warning signal was detected.
-- 📊 **Interactive Dashboard:** Provides a dark-themed Streamlit interface for analyzing financial messages.
-- 🧪 **Model Evaluation:** Includes accuracy, precision, recall, F1-score, confusion matrix, and cross-validation tools.
-- ✅ **Dataset Validation:** Checks dataset labels, empty messages, and duplicate entries.
-- 🔐 **Safety Guidance:** Encourages independent verification and safer handling of financial information.
+1. You enter a message in the dashboard.
+2. The rule-based analyzer checks it against predefined warning patterns.
+3. The trained classifier produces its own prediction.
+4. The dashboard shows both results together with the matched text and explanations.
 
-## ⚙️ Technologies Used
-
-| Technology | Purpose |
-|---|---|
-| Python | Core programming language |
-| Streamlit | Interactive web dashboard |
-| Pandas | Dataset loading and processing |
-| Scikit-learn | TF-IDF, Logistic Regression, and model evaluation |
-| Joblib | Saving and loading the trained model |
-| Pytest | Automated testing |
-| Git & GitHub | Version control and project hosting |
-
-## 🧠 How It Works
-
-1. **Input:** The user enters a financial message into the dashboard.
-2. **Rule-Based Analysis:** Predefined text patterns are checked for potential warning signs.
-3. **Text Classification:** A trained TF-IDF and Logistic Regression pipeline generates a machine learning prediction.
-4. **Evidence Presentation:** The dashboard displays detected warning signals, matched text, and explanations.
-5. **Safety Guidance:** The user receives general suggestions for independently verifying suspicious claims.
-
-## 🏗️ Project Structure
+## Project structure
 
 ```text
 ScamShield-AI/
-├── app.py
+├── app.py                  # Streamlit dashboard
 ├── requirements.txt
-├── .gitignore
 ├── data/
-│   └── messages.csv
+│   └── messages.csv        # training data
 ├── models/
 │   └── scam_classifier.joblib
 ├── screenshots/
-│   └── scamshield-dashboard.png
 ├── src/
-│   ├── __init__.py
-│   ├── analyzer.py
-│   ├── predictor.py
+│   ├── analyzer.py         # rule-based warning signals
+│   ├── predictor.py        # loads the model and predicts
 │   ├── train_model.py
 │   ├── validate_dataset.py
 │   └── evaluate_model.py
@@ -73,149 +50,63 @@ ScamShield-AI/
     └── test_analyzer.py
 ```
 
-## 🚀 Getting Started
+## Running it locally
 
-### Prerequisites
-
-- Python 3.10 or newer
-- Git
-
-### 1. Clone the Repository
+Requires Python 3.10+ and Git.
 
 ```bash
 git clone https://github.com/MuhammadSharafat/ScamShield-AI.git
 cd ScamShield-AI
-```
 
-### 2. Create and Activate a Virtual Environment
-
-**Windows — Git Bash**
-
-```bash
 python -m venv vscam
-source vscam/Scripts/activate
-```
+source vscam/Scripts/activate      # Git Bash on Windows
+# .\vscam\Scripts\Activate.ps1     # PowerShell on Windows
 
-**Windows — PowerShell**
-
-```powershell
-python -m venv vscam
-.\vscam\Scripts\Activate.ps1
-```
-
-### 3. Install Dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### 4. Validate the Dataset
+Then, in order:
 
 ```bash
-python -m src.validate_dataset
+python -m src.validate_dataset   # check the dataset
+python -m src.train_model        # train and save models/scam_classifier.joblib
+python -m src.evaluate_model     # stratified cross-validation
+streamlit run app.py             # launch the dashboard
+python -m pytest -v              # run the tests
 ```
 
-This checks the dataset structure, label distribution, empty messages, and duplicate entries.
+## Model performance (read this before trusting any number)
 
-### 5. Train the Machine Learning Model
+The dataset is tiny: **30 synthetic messages**, 15 per class. That means the numbers below say very little about real-world performance.
 
-```bash
-python -m src.train_model
-```
+- **Holdout split:** 21 training / 9 test examples, 88.9% test accuracy (8 of 9 correct).
+- **5-fold cross-validation:**
 
-This trains the TF-IDF and Logistic Regression pipeline and saves the model to `models/scam_classifier.joblib`.
-
-### 6. Run Model Evaluation
-
-```bash
-python -m src.evaluate_model
-```
-
-This script evaluates the model using stratified cross-validation and reports accuracy, precision, recall, and F1-score.
-
-### 7. Launch the Dashboard
-
-```bash
-streamlit run app.py
-```
-
-Open the local URL displayed in the terminal.
-
-### 8. Run Automated Tests
-
-```bash
-python -m pytest -v
-```
-
-## 📊 Model Evaluation
-
-The current prototype uses a small dataset of **30 illustrative synthetic messages**, with 15 examples in each class.
-
-A preliminary holdout evaluation used 21 training examples and 9 test examples. The observed test accuracy was 88.9%.
-
-A separate five-fold cross-validation run produced the following exploratory results:
-
-| Metric | Mean | Standard Deviation |
+| Metric | Mean | Std. dev. |
 |---|---:|---:|
-| Accuracy | 86.7% | 19.4 percentage points |
-| Precision | 85.0% | 20.0 percentage points |
-| Recall | 93.3% | 13.3 percentage points |
-| F1-score | 88.6% | 16.7 percentage points |
+| Accuracy | 86.7% | 19.4 pp |
+| Precision | 85.0% | 20.0 pp |
+| Recall | 93.3% | 13.3 pp |
+| F1-score | 88.6% | 16.7 pp |
 
-These results are exploratory and do not establish reliable real-world scam detection performance. The dataset is small and synthetic, so results may vary substantially with different samples. A larger, independently reviewed dataset and representative unseen test data are needed for meaningful real-world evaluation.
+The standard deviations are large because each fold has only a handful of test messages. Results would shift noticeably with a different sample. The model's score is also not a calibrated probability of fraud.
 
-The model's class score is not a calibrated probability that a message is a scam.
+## Privacy
 
-## 🧪 Testing and Data Validation
+- Remove names, account numbers, phone numbers, and other personal details before pasting a message.
+- Never share OTPs, passwords, or PINs with anyone, including this app.
+- Avoid entering sensitive information into the hosted version unless you have reviewed how it handles data and logging.
 
-The project includes automated tests for selected rule-based warning patterns and a dataset validation script.
+## Known limitations and next steps
 
-Run the tests:
+- The dataset is small and synthetic. The most important next step is a larger, independently reviewed set of real examples.
+- The model should be evaluated on unseen, representative data.
+- Detection of unusual wording and new scam patterns is weak.
+- Test coverage currently focuses on the rule-based analyzer. The ML pipeline needs tests too.
+- Mobile layout and accessibility need work.
+- Privacy and deployment practices should be tightened.
 
-```bash
-python -m pytest -v
-```
+## Author
 
-Validate the dataset:
-
-```bash
-python -m src.validate_dataset
-```
-
-Evaluate the model:
-
-```bash
-python -m src.evaluate_model
-```
-
-## 🔐 Privacy and Responsible Use
-
-- Remove names, account numbers, phone numbers, and other personal information before analyzing a message.
-- Never share OTPs, passwords, PINs, or private financial credentials.
-- Verify suspicious claims using independently obtained official sources.
-- Treat rule-based scores and machine learning predictions as indicators for further review, not proof of fraud.
-- Avoid entering sensitive information into the hosted application unless its privacy and logging behavior have been reviewed.
-
-## 🛣️ Future Improvements
-
-- Expand the dataset with diverse, responsibly sourced and reviewed examples.
-- Evaluate the model using representative, independently collected test data.
-- Improve detection of varied wording, context, and previously unseen scam patterns.
-- Add comprehensive automated tests for both the rule-based analyzer and machine learning pipeline.
-- Improve accessibility and mobile responsiveness.
-- Strengthen privacy safeguards and deployment practices.
-
-## 👨‍💻 Author
-
-**Muhammad Sharafat Alam**
-
-Aspiring Machine Learning Engineer | AI Enthusiast
-
-- GitHub: [@MuhammadSharafat](https://github.com/MuhammadSharafat)
-- Live Demo: [ScamShield AI](https://scamshield-ai-fyfhkxe4779egmd9tsvuhq.streamlit.app/)
-
----
-
-⭐ If you find this project useful, consider starring the repository.
-
-**Learn. Build. Improve. Repeat.**
+Muhammad Sharafat Alam, aspiring machine learning engineer.
+[GitHub](https://github.com/MuhammadSharafat) · [Portfolio](https://sharafatalam.netlify.app/)
