@@ -11,6 +11,12 @@ Built with Python and Streamlit, this project provides an interactive dashboard 
 
 Explore the interactive dashboard and review the warning signals detected in financial messages.
 
+## 🖥️ Application Preview
+
+![ScamShield AI Dashboard](screenshots/scamshield-dashboard.png)
+
+**[🚀 Try the Live Application](https://scamshield-ai-fyfhkxe4779egmd9tsvuhq.streamlit.app/)**
+
 > **Disclaimer:** ScamShield AI is an educational prototype, not a definitive fraud detector or financial advisor. Its results may be incorrect and should never be treated as proof that a message is fraudulent or legitimate.
 
 ## ✨ Key Features
@@ -54,6 +60,8 @@ ScamShield-AI/
 │   └── messages.csv
 ├── models/
 │   └── scam_classifier.joblib
+├── screenshots/
+│   └── scamshield-dashboard.png
 ├── src/
 │   ├── __init__.py
 │   ├── analyzer.py
@@ -154,7 +162,7 @@ A separate five-fold cross-validation run produced the following exploratory res
 | Recall | 93.3% | 13.3 percentage points |
 | F1-score | 88.6% | 16.7 percentage points |
 
-These results are **exploratory, not evidence of reliable real-world scam detection**. The dataset is small and synthetic, so results may vary substantially with different samples. A larger, independently reviewed dataset and representative unseen test data are needed for meaningful real-world evaluation.
+These results are exploratory and do not establish reliable real-world scam detection performance. The dataset is small and synthetic, so results may vary substantially with different samples. A larger, independently reviewed dataset and representative unseen test data are needed for meaningful real-world evaluation.
 
 The model's class score is not a calibrated probability that a message is a scam.
 
@@ -162,19 +170,19 @@ The model's class score is not a calibrated probability that a message is a scam
 
 The project includes automated tests for selected rule-based warning patterns and a dataset validation script.
 
-Run the tests with:
+Run the tests:
 
 ```bash
 python -m pytest -v
 ```
 
-Validate the dataset with:
+Validate the dataset:
 
 ```bash
 python -m src.validate_dataset
 ```
 
-Evaluate the model with:
+Evaluate the model:
 
 ```bash
 python -m src.evaluate_model
